@@ -57,7 +57,7 @@
 
             <div class="mb-6">
                 <h3 class="font-semibold text-gray-dark mb-2">Mô tả</h3>
-                <div class="text-gray-medium leading-relaxed">{{ $sanPham->mo_ta_chi_tiet ?? 'Không có mô tả' }}</div>
+                <div class="text-gray-medium leading-relaxed prose prose-sm max-w-none" id="moTaChiTiet">{{ $sanPham->mo_ta_chi_tiet ?? 'Không có mô tả' }}</div>
             </div>
 
             <div class="space-y-2 mb-6">
@@ -88,12 +88,25 @@
 
 <!-- Phần đánh giá -->
 <div class="max-w-7xl mx-auto px-4 py-12">
-    <h2 class="text-2xl font-bold text-gray-dark mb-6">Đánh giá sản phẩm</h2>
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-dark">Đánh giá sản phẩm</h2>
+        @if(auth()->check() && $daMua && !$daDanhGia)
+        <button onclick="toggleReviewForm()" class="px-6 py-3 bg-gradient-to-r from-rose-main to-pink-main text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all font-semibold flex items-center gap-2">
+            <i data-lucide="star" class="w-5 h-5"></i>
+            Gửi đánh giá
+        </button>
+        @endif
+    </div>
     
     @if(auth()->check() && $daMua && !$daDanhGia)
-    <!-- Form đánh giá -->
-    <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm border border-gray-100">
-        <h3 class="font-semibold text-gray-dark mb-4">Viết đánh giá của bạn</h3>
+    <!-- Form đánh giá (ẩn mặc định) -->
+    <div id="reviewFormContainer" class="hidden bg-white rounded-2xl p-6 mb-8 shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-gray-dark">Viết đánh giá của bạn</h3>
+            <button onclick="toggleReviewForm()" class="text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
         <form id="reviewForm" action="/san-pham/{{ $sanPham->id }}/danh-gia" method="POST">
             @csrf
             <div class="mb-4">
@@ -113,13 +126,12 @@
         </form>
     </div>
     @elseif(auth()->check() && $userReview)
-    <!-- Form chỉnh sửa đánh giá -->
-    <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm border border-gray-100">
+    <!-- Form chỉnh sửa đánh giá (ẩn mặc định) -->
+    <div id="editReviewFormContainer" class="hidden bg-white rounded-2xl p-6 mb-8 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="font-semibold text-gray-dark">Đánh giá của bạn</h3>
-            <button onclick="deleteReview({{ $userReview->id }})" class="text-red-500 hover:text-red-600 text-sm font-medium flex items-center gap-1">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                Xóa
+            <h3 class="font-semibold text-gray-dark">Chỉnh sửa đánh giá</h3>
+            <button onclick="toggleEditReviewForm()" class="text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
         <form id="editReviewForm" action="/san-pham/{{ $userReview->id }}/cap-nhat-danh-gia" method="POST">
@@ -160,13 +172,25 @@
                 <img src="{{ $review->user->anh_dai_dien }}" class="w-12 h-12 rounded-full object-cover border-2 border-rose-pastel">
                 @else
                 <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-pastel to-pink-pastel flex items-center justify-center border-2 border-rose-main">
-                    <span class="text-rose-main font-bold text-lg">{{ substr($review->user->ho_va_ten ?? $review->user->email, 0, 1) }}</span>
+                    <span class="text-rose-main font-bold text-lg">{{ substr($review->user->ho_ten ?? $review->user->email, 0, 1) }}</span>
                 </div>
                 @endif
                 <div class="flex-1">
                     <div class="flex items-center justify-between">
-                        <p class="font-semibold text-gray-dark">{{ $review->user->ho_va_ten ?? $review->user->email }}</p>
-                        <p class="text-sm text-gray-400">{{ $review->created_at->format('d/m/Y H:i') }}</p>
+                        <p class="font-semibold text-gray-dark">{{ $review->user->ho_ten ?? $review->user->email }}</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-sm text-gray-400">{{ $review->created_at->format('d/m/Y H:i') }}</p>
+                            @if(auth()->check() && auth()->id() === $review->user_id)
+                            <div class="flex gap-1">
+                                <button onclick="toggleEditReviewForm()" class="text-blue-500 hover:text-blue-600 p-1 rounded hover:bg-blue-50 transition-colors" title="Chỉnh sửa">
+                                    <i data-lucide="edit-2" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="deleteReview({{ $review->id }})" class="text-red-500 hover:text-red-600 p-1 rounded hover:bg-red-50 transition-colors" title="Xóa">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            @endif
+                        </div>
                     </div>
                     <div class="flex gap-1 mt-1">
                         @for($i = 1; $i <= 5; $i++)
@@ -191,6 +215,25 @@
 
 <script>
     lucide.createIcons();
+
+    // Parse markdown content
+    document.addEventListener('DOMContentLoaded', function() {
+        const moTaElement = document.getElementById('moTaChiTiet');
+        if (moTaElement && typeof marked !== 'undefined') {
+            const markdownContent = moTaElement.textContent;
+            moTaElement.innerHTML = marked.parse(markdownContent);
+        }
+    });
+
+    function toggleReviewForm() {
+        const container = document.getElementById('reviewFormContainer');
+        container.classList.toggle('hidden');
+    }
+
+    function toggleEditReviewForm() {
+        const container = document.getElementById('editReviewFormContainer');
+        container.classList.toggle('hidden');
+    }
 
     function setRating(rating) {
         document.getElementById('danhGiaInput').value = rating;
