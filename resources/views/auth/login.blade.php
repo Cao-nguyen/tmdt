@@ -66,6 +66,12 @@
                     </div>
                 </div>
 
+                <!-- Ghi nhớ đăng nhập -->
+                <div class="flex items-center">
+                    <input type="checkbox" name="ghi_nho" id="ghi_nho" class="w-4 h-4 text-rose-main border-gray-light rounded focus:ring-rose-main cursor-pointer">
+                    <label for="ghi_nho" class="ml-2 text-sm text-gray-medium cursor-pointer">Ghi nhớ đăng nhập</label>
+                </div>
+
                 <!-- Submit Button -->
                 <button type="submit" class="w-full inline-flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-rose-main to-pink-main text-white rounded-xl hover:shadow-xl hover:scale-105 transition-all font-semibold text-lg">
                     <i data-lucide="log-in" class="w-5 h-5"></i>

@@ -196,18 +196,32 @@
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-dark mb-1.5">Mô tả chi tiết</label>
                         <div class="border border-gray-light rounded-lg overflow-hidden">
-                            <div class="flex gap-1 p-2 bg-gray-light border-b border-gray-light">
-                                <button type="button" onclick="formatText('bold')" class="p-1.5 rounded hover:bg-white transition-colors" title="In đậm">
-                                    <i data-lucide="bold" class="w-4 h-4 text-gray-dark"></i>
+                            <!-- Toolbar -->
+                            <div class="bg-gray-light px-3 py-2 border-b border-gray-light flex items-center gap-1 flex-wrap">
+                                <button type="button" onclick="formatText('bold')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="In đậm">
+                                    <i class="fas fa-bold"></i>
                                 </button>
-                                <button type="button" onclick="formatText('italic')" class="p-1.5 rounded hover:bg-white transition-colors" title="In nghiêng">
-                                    <i data-lucide="italic" class="w-4 h-4 text-gray-dark"></i>
+                                <button type="button" onclick="formatText('italic')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="In nghiêng">
+                                    <i class="fas fa-italic"></i>
                                 </button>
-                                <button type="button" onclick="formatText('underline')" class="p-1.5 rounded hover:bg-white transition-colors" title="Gạch chân">
-                                    <i data-lucide="underline" class="w-4 h-4 text-gray-dark"></i>
+                                <button type="button" onclick="formatText('underline')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="Gạch chân">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                                <div class="w-px h-6 bg-gray-medium mx-1"></div>
+                                <button type="button" onclick="formatText('insertUnorderedList')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="Danh sách">
+                                    <i class="fas fa-list-ul"></i>
+                                </button>
+                                <button type="button" onclick="formatText('insertOrderedList')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="Danh sách số">
+                                    <i class="fas fa-list-ol"></i>
+                                </button>
+                                <div class="w-px h-6 bg-gray-medium mx-1"></div>
+                                <button type="button" onclick="insertLink()" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="Thêm link">
+                                    <i class="fas fa-link"></i>
                                 </button>
                             </div>
-                            <textarea name="mo_ta_chi_tiet" id="moTaChiTiet" rows="4" class="w-full px-3 py-2 text-sm focus:outline-none resize-none" placeholder="Nhập mô tả chi tiết..."></textarea>
+                            <!-- Editor -->
+                            <div id="editor" contenteditable="true" class="min-h-[300px] p-4 focus:outline-none" style="background: white;"></div>
+                            <textarea name="mo_ta_chi_tiet" id="moTaChiTiet" class="hidden"></textarea>
                         </div>
                     </div>
 
@@ -326,7 +340,29 @@ function showEditModal(id) {
                 }
                 
                 document.getElementById('moTaChiTiet').value = product.mo_ta_chi_tiet || '';
+                document.getElementById('editor').innerHTML = product.mo_ta_chi_tiet || '';
                 document.getElementById('trangThai').checked = product.trang_thai;
+
+                // Load ảnh hiện tại
+                if (product.hinhAnhs && product.hinhAnhs.length > 0) {
+                    const preview = document.getElementById('imagePreview');
+                    const placeholder = document.getElementById('imagePlaceholder');
+                    preview.innerHTML = '';
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+
+                    product.hinhAnhs.forEach((img, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'relative group';
+                        div.innerHTML = `
+                            <img src="${img.duong_dan}" class="w-full h-20 object-cover rounded-lg">
+                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                                <span class="text-white text-xs font-medium">Ảnh ${index + 1}</span>
+                            </div>
+                        `;
+                        preview.appendChild(div);
+                    });
+                }
 
                 document.getElementById('productModal').classList.remove('hidden');
             } else {
@@ -474,8 +510,26 @@ function previewImages(event) {
     }
 }
 
-// Rich text editor
+// Editor functions
 function formatText(command) {
+    document.execCommand(command, false, null);
+    updateContent();
+}
+
+function insertLink() {
+    const url = prompt('Nhập URL:');
+    if (url) {
+        document.execCommand('createLink', false, url);
+        updateContent();
+    }
+}
+
+function updateContent() {
+    document.getElementById('moTaChiTiet').value = document.getElementById('editor').innerHTML;
+}
+
+// Rich text editor (cũ - cho textarea)
+function formatTextarea(command) {
     const editor = document.getElementById('moTaChiTiet');
     const start = editor.selectionStart;
     const end = editor.selectionEnd;
@@ -492,6 +546,12 @@ function formatText(command) {
             break;
         case 'underline':
             formattedText = `__${selectedText}__`;
+            break;
+        case 'insertUnorderedList':
+            formattedText = `- ${selectedText}`;
+            break;
+        case 'insertOrderedList':
+            formattedText = `1. ${selectedText}`;
             break;
     }
 

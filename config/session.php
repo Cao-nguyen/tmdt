@@ -6,7 +6,7 @@ return [
     'driver' => env('SESSION_DRIVER', 'file'),
 
     // Session lifetime (phút)
-    'lifetime' => env('SESSION_LIFETIME', 120),
+    'lifetime' => env('SESSION_LIFETIME', 4320),
 
     // Expire on close
     'expire_on_close' => false,
