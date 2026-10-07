@@ -335,7 +335,7 @@ class AdminController extends Controller
         }
 
         try {
-            $request->validate([
+            $rules = [
                 'ten_san_pham' => 'required|string|max:255',
                 'danh_muc_id' => 'required|exists:danh_mucs,id',
                 'mo_ta_ngan' => 'nullable|string',
@@ -344,9 +344,15 @@ class AdminController extends Controller
                 'loai_giam_gia' => 'nullable|in:vnđ,phan_tram',
                 'gia_khuyen_mai' => 'nullable|numeric|min:0',
                 'so_luong' => 'required|integer|min:0',
-                'hinh_anhs' => 'nullable|array',
-                'hinh_anhs.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
-            ]);
+            ];
+
+            // Chỉ validate ảnh khi có upload mới
+            if ($request->hasFile('hinh_anhs')) {
+                $rules['hinh_anhs'] = 'nullable|array';
+                $rules['hinh_anhs.*'] = 'image|mimes:jpeg,png,jpg,gif|max:5120';
+            }
+
+            $request->validate($rules);
 
             $sanPham = new SanPham();
             $sanPham->ten_san_pham = $request->ten_san_pham;
@@ -474,7 +480,7 @@ class AdminController extends Controller
         Log::info('SanPhamUpdate - Request data:', $request->all());
 
         try {
-            $request->validate([
+            $rules = [
                 'ten_san_pham' => 'required|string|max:255',
                 'danh_muc_id' => 'required|exists:danh_mucs,id',
                 'mo_ta_ngan' => 'nullable|string',
@@ -483,9 +489,15 @@ class AdminController extends Controller
                 'loai_giam_gia' => 'nullable|in:vnđ,phan_tram',
                 'gia_khuyen_mai' => 'nullable|numeric|min:0',
                 'so_luong' => 'required|integer|min:0',
-                'hinh_anhs' => 'nullable|array',
-                'hinh_anhs.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
-            ]);
+            ];
+
+            // Chỉ validate ảnh khi có upload mới
+            if ($request->hasFile('hinh_anhs')) {
+                $rules['hinh_anhs'] = 'nullable|array';
+                $rules['hinh_anhs.*'] = 'image|mimes:jpeg,png,jpg,gif|max:5120';
+            }
+
+            $request->validate($rules);
 
             $sanPham = SanPham::findOrFail($id);
             $sanPham->ten_san_pham = $request->ten_san_pham;
