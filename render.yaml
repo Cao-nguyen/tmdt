@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: shophoatuoi
+    env: php
+    buildCommand: |
+      composer install --no-interaction --prefer-dist --optimize-autoloader
+      php artisan key:generate
+      php artisan migrate --force
+      php artisan route:clear
+      php artisan config:clear
+      php artisan cache:clear
+      php artisan view:clear
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://shophoatuoi.onrender.com
+      - key: LOG_CHANNEL
+        value: errorlog
