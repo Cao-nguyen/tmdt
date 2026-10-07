@@ -49,72 +49,68 @@ Quản lý bài viết
         <table class="w-full">
             <thead class="bg-gray-light">
                 <tr>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Tiêu đề</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Slug</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Trạng thái</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Ngày tạo</th>
-                    <th class="px-6 py-4 text-center text-sm font-semibold text-gray-dark">Hành động</th>
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Tiêu đề</th>
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Trạng thái</th>
+                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Ngày tạo</th>
+                    <th class="px-5 py-3 text-center text-xs font-semibold text-gray-dark uppercase tracking-wide">Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 <?php $__empty_1 = true; $__currentLoopData = $baiViets; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $baiViet): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr class="border-b border-gray-light hover:bg-gray-light/50 transition-colors">
-                        <td class="px-6 py-5">
+                        <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
                                 <?php if($baiViet->hinh_anh): ?>
-                                    <img src="<?php echo e($baiViet->hinh_anh); ?>" alt="<?php echo e($baiViet->tieu_de); ?>" class="w-12 h-12 rounded-xl object-cover">
+                                    <img src="<?php echo e($baiViet->hinh_anh); ?>" alt="<?php echo e($baiViet->tieu_de); ?>" class="w-10 h-10 rounded-lg object-cover flex-shrink-0">
                                 <?php else: ?>
-                                    <div class="w-12 h-12 bg-gray-light rounded-xl flex items-center justify-center">
-                                        <i data-lucide="file-text" class="w-6 h-6 text-gray-medium"></i>
+                                    <div class="w-10 h-10 bg-gray-light rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="file-text" class="w-5 h-5 text-gray-medium"></i>
                                     </div>
                                 <?php endif; ?>
-                                <div>
-                                    <p class="font-medium text-gray-dark"><?php echo e($baiViet->tieu_de); ?></p>
-                                    <p class="text-sm text-gray-medium"><?php echo e(Str::limit(strip_tags($baiViet->noi_dung), 50)); ?></p>
+                                <div class="min-w-0">
+                                    <p class="font-medium text-gray-dark text-sm truncate"><?php echo e($baiViet->tieu_de); ?></p>
+                                    <p class="text-xs text-gray-medium truncate"><?php echo e(Str::limit(strip_tags($baiViet->noi_dung), 40)); ?></p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-5">
-                            <code class="px-3 py-1 bg-gray-light rounded-lg text-sm text-gray-dark"><?php echo e($baiViet->slug); ?></code>
-                        </td>
-                        <td class="px-6 py-5">
+                        <td class="px-5 py-4">
                             <?php if($baiViet->trang_thai): ?>
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-green-pastel text-green-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-pastel text-green-main rounded-lg text-xs font-semibold">
+                                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
                                     Đã xuất bản
                                 </span>
                             <?php else: ?>
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-pastel text-yellow-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="clock" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-pastel text-yellow-main rounded-lg text-xs font-semibold">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                                     Nháp
                                 </span>
                             <?php endif; ?>
                         </td>
-                        <td class="px-6 py-5 text-sm text-gray-medium">
-                            <?php echo e($baiViet->created_at->format('d/m/Y H:i')); ?>
+                        <td class="px-5 py-4 text-xs text-gray-medium">
+                            <?php echo e($baiViet->created_at->format('d/m/Y')); ?>
 
                         </td>
-                        <td class="px-6 py-5">
+                        <td class="px-5 py-4">
                             <div class="flex items-center justify-center gap-2">
-                                <button onclick="showEditModal(<?php echo e($baiViet->id); ?>)" class="w-10 h-10 bg-blue-pastel text-blue-main rounded-xl flex items-center justify-center hover:bg-blue-light hover:scale-110 transition-all shadow-sm" title="Sửa">
-                                    <i data-lucide="edit-2" class="w-5 h-5"></i>
+                                <button onclick="showEditModal(<?php echo e($baiViet->id); ?>)" class="w-8 h-8 bg-blue-pastel text-blue-main rounded-lg flex items-center justify-center hover:bg-blue-light transition-colors" title="Sửa">
+                                    <i data-lucide="edit-2" class="w-4 h-4"></i>
                                 </button>
-                                <button onclick="showDeleteModal(<?php echo e($baiViet->id); ?>, '<?php echo e($baiViet->tieu_de); ?>')" class="w-10 h-10 bg-red-pastel text-red-main rounded-xl flex items-center justify-center hover:bg-red-light hover:scale-110 transition-all shadow-sm" title="Xóa">
-                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                <button onclick="showDeleteModal(<?php echo e($baiViet->id); ?>, '<?php echo e($baiViet->tieu_de); ?>')" class="w-8 h-8 bg-red-pastel text-red-main rounded-lg flex items-center justify-center hover:bg-red-light transition-colors" title="Xóa">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
-                        <td colspan="5" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center gap-6">
-                                <div class="w-20 h-20 bg-gray-light rounded-full flex items-center justify-center">
-                                    <i data-lucide="file-text" class="w-10 h-10 text-gray-medium"></i>
+                        <td colspan="4" class="px-5 py-12 text-center">
+                            <div class="flex flex-col items-center gap-4">
+                                <div class="w-16 h-16 bg-gray-light rounded-full flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-8 h-8 text-gray-medium"></i>
                                 </div>
-                                <p class="text-gray-medium text-lg">Chưa có bài viết nào</p>
-                                <button onclick="showCreateModal()" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-rose-main to-pink-main text-white rounded-2xl hover:shadow-lg hover:scale-105 transition-all font-medium">
-                                    <i data-lucide="plus" class="w-5 h-5"></i>
+                                <p class="text-gray-medium">Chưa có bài viết nào</p>
+                                <button onclick="showCreateModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-main to-pink-main text-white rounded-xl hover:shadow-lg transition-all font-medium text-sm">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
                                     <span>Thêm bài viết mới</span>
                                 </button>
                             </div>
@@ -174,30 +170,31 @@ Quản lý bài viết
                     <label class="block text-sm font-medium text-gray-dark mb-1.5">Nội dung <span class="text-red-main">*</span></label>
                     <div class="border border-gray-light rounded-lg overflow-hidden">
                         <!-- Toolbar -->
-                        <div class="bg-gray-light px-3 py-2 border-b border-gray-light flex items-center gap-2 flex-wrap">
-                            <button type="button" onclick="formatText('bold')" class="p-2 hover:bg-gray-medium rounded" title="In đậm">
-                                <b>B</b>
+                        <div class="bg-gray-light px-3 py-2 border-b border-gray-light flex items-center gap-1 flex-wrap">
+                            <button type="button" onclick="formatText('bold')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="In đậm">
+                                <i class="fas fa-bold"></i>
                             </button>
-                            <button type="button" onclick="formatText('italic')" class="p-2 hover:bg-gray-medium rounded" title="In nghiêng">
-                                <i>I</i>
+                            <button type="button" onclick="formatText('italic')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="In nghiêng">
+                                <i class="fas fa-italic"></i>
                             </button>
-                            <button type="button" onclick="formatText('underline')" class="p-2 hover:bg-gray-medium rounded" title="Gạch chân">
-                                <u>U</u>
+                            <button type="button" onclick="formatText('underline')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="Gạch chân">
+                                <i class="fas fa-underline"></i>
                             </button>
                             <div class="w-px h-6 bg-gray-medium mx-1"></div>
-                            <button type="button" onclick="formatText('insertUnorderedList')" class="p-2 hover:bg-gray-medium rounded" title="Danh sách">
-                                • List
+                            <button type="button" onclick="formatText('insertUnorderedList')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="Danh sách">
+                                <i class="fas fa-list-ul"></i>
                             </button>
-                            <button type="button" onclick="insertLink()" class="p-2 hover:bg-gray-medium rounded" title="Thêm link">
-                                🔗 Link
+                            <button type="button" onclick="formatText('insertOrderedList')" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="Danh sách số">
+                                <i class="fas fa-list-ol"></i>
                             </button>
-                            <label class="p-2 hover:bg-gray-medium rounded cursor-pointer" title="Upload ảnh" id="uploadImageBtn">
-                                <span id="uploadIcon">🖼️ Ảnh</span>
+                            <div class="w-px h-6 bg-gray-medium mx-1"></div>
+                            <button type="button" onclick="insertLink()" class="p-2 hover:bg-gray-medium rounded text-gray-dark" title="Thêm link">
+                                <i class="fas fa-link"></i>
+                            </button>
+                            <label class="p-2 hover:bg-gray-medium rounded cursor-pointer text-gray-dark" title="Upload ảnh" id="uploadImageBtn">
+                                <span id="uploadIcon"><i class="fas fa-image"></i></span>
                                 <span id="uploadSpinner" class="hidden">
-                                    <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
+                                    <i class="fas fa-spinner fa-spin"></i>
                                 </span>
                                 <input type="file" id="imageUpload" accept="image/*" class="hidden" onchange="uploadImage(this)">
                             </label>
@@ -416,7 +413,7 @@ Quản lý bài viết
                 document.getElementById('slug').value = data.data.slug;
                 document.getElementById('noiDung').value = data.data.noi_dung;
                 document.getElementById('editor').innerHTML = data.data.noi_dung;
-                document.getElementById('trangThai').value = data.data.trang_thai;
+                document.getElementById('trangThai').value = data.data.trang_thai ? '1' : '0';
                 document.getElementById('baiVietModal').classList.remove('hidden');
             })
             .catch(error => {

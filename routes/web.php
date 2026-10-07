@@ -75,42 +75,6 @@ Route::get('/chinh-sach', function () {
     return view('pages.policies');
 })->name('chinh-sach');
 
-// Route hiển thị danh sách tất cả sản phẩm
-Route::get('/san-pham', [SanPhamController::class, 'HienThiDanhSach'])
-     ->name('san-pham.danh-sach');
-
-// Route hiển thị chi tiết một sản phẩm
-Route::get('/san-pham/{id}', [SanPhamController::class, 'HienThiChiTiet'])
-     ->name('san-pham.chi-tiet')
-     ->where('id', '[0-9]+'); // Chỉ chấp nhận số
-
-// Route hiển thị form tạo sản phẩm mới
-Route::get('/san-pham/tao-moi', [SanPhamController::class, 'HienThiFormTao'])
-     ->name('san-pham.form-tao');
-
-// Route lưu sản phẩm mới vào database (POST request)
-Route::post('/san-pham/luu-moi', [SanPhamController::class, 'LuuSanPhamMoi'])
-     ->name('san-pham.luu-moi');
-
-// Route hiển thị form chỉnh sửa sản phẩm
-Route::get('/san-pham/{id}/sua', [SanPhamController::class, 'HienThiFormSua'])
-     ->name('san-pham.form-sua')
-     ->where('id', '[0-9]+');
-
-// Route cập nhật thông tin sản phẩm (POST request)
-Route::post('/san-pham/{id}/cap-nhat', [SanPhamController::class, 'CapNhatSanPham'])
-     ->name('san-pham.cap-nhat')
-     ->where('id', '[0-9]+');
-
-// Route xóa sản phẩm (POST request)
-Route::post('/san-pham/{id}/xoa', [SanPhamController::class, 'XoaSanPham'])
-     ->name('san-pham.xoa')
-     ->where('id', '[0-9]+');
-
-// Route tìm kiếm sản phẩm
-Route::get('/san-pham/tim-kiem', [SanPhamController::class, 'TimKiemSanPham'])
-     ->name('san-pham.tim-kiem');
-
 // Route test kết nối với Supabase
 Route::get('/test-database', function () {
     return response()->json([
@@ -155,6 +119,8 @@ Route::post('/admin/san-pham/{id}/delete', [AdminController::class, 'sanPhamDest
 // Routes quản lý danh mục
 Route::get('/admin/danh-muc', [AdminController::class, 'danhMucIndex'])
      ->name('quan-tri.danh-muc.index');
+Route::get('/admin/danh-muc/{id}/data', [AdminController::class, 'danhMucData'])
+     ->name('quan-tri.danh-muc.data');
 Route::get('/admin/danh-muc/create', [AdminController::class, 'danhMucCreate'])
      ->name('quan-tri.danh-muc.create');
 Route::post('/admin/danh-muc', [AdminController::class, 'danhMucStore'])
@@ -184,6 +150,8 @@ Route::get('/admin/cai-dat', [AdminController::class, 'caiDatIndex'])
      ->name('admin.cai-dat.index');
 Route::post('/admin/cai-dat', [AdminController::class, 'caiDatUpdate'])
      ->name('admin.cai-dat.update');
+Route::post('/admin/cai-dat/delete-logo', [AdminController::class, 'deleteLogo'])
+     ->name('admin.cai-dat.delete-logo');
 
 // Routes quản lý bài viết
 Route::get('/admin/bai-viet', [AdminController::class, 'baiVietIndex'])

@@ -11,6 +11,8 @@
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Currency Format Utilities -->
+    <script src="<?php echo e(asset('js/currency-format.js')); ?>"></script>
     <!-- Font Awesome (cho icon mạng xã hội) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -37,8 +39,8 @@
             </div>
             
             <!-- Navigation -->
-            <nav class="flex-1 w-full px-4 space-y-3 overflow-y-auto">
-                <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all <?php echo e(request()->path() === 'admin' ? 'bg-gradient-to-r from-rose-main to-pink-main text-white shadow-lg' : 'text-gray-light hover:bg-white/10 hover:text-white'); ?>">
+            <nav class="flex-1 w-full px-4 space-y-2 overflow-y-auto">
+                <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all <?php echo e(request()->is('admin') || request()->is('admin/') ? 'bg-gradient-to-r from-rose-main to-pink-main text-white shadow-lg' : 'text-gray-light hover:bg-white/10 hover:text-white'); ?>">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                     <span>Trang tổng quan</span>
                 </a>

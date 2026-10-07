@@ -25,10 +25,63 @@ Cài đặt hệ thống
     </div>
     <?php else: ?>
     <!-- Settings Form -->
-    <form action="/admin/cai-dat" method="POST" id="settingsForm">
+    <form action="/admin/cai-dat" method="POST" id="settingsForm" enctype="multipart/form-data">
         <?php echo csrf_field(); ?>
 
         <div class="space-y-8">
+            <!-- Logo -->
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <h2 class="text-xl font-bold text-gray-dark mb-6 flex items-center gap-2">
+                    <i data-lucide="image" class="w-5 h-5"></i>
+                    Logo website
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Logo hiện tại -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-dark mb-2">Logo hiện tại</label>
+                        <div class="border-2 border-dashed border-gray-light rounded-xl p-6 flex items-center justify-center bg-gray-pure min-h-[120px]">
+                            <?php if($logo = \App\Models\Setting::get('site_logo')): ?>
+                            <div class="relative">
+                                <img src="<?php echo e(asset($logo)); ?>" alt="Logo hiện tại" class="max-h-24 object-contain">
+                                <button type="button" onclick="deleteLogo()" class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-md">
+                                    <i data-lucide="x" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+                            <?php else: ?>
+                            <div class="text-center">
+                                <i data-lucide="image-off" class="w-8 h-8 text-gray-medium mx-auto mb-2"></i>
+                                <p class="text-sm text-gray-medium">Chưa có logo</p>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Upload logo mới -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-dark mb-2">Upload logo mới</label>
+                        <div class="border-2 border-dashed border-gray-light rounded-xl p-6 hover:border-rose-main transition-colors cursor-pointer">
+                            <input
+                                type="file"
+                                name="site_logo"
+                                accept="image/*"
+                                id="logoInput"
+                                class="hidden"
+                                onchange="previewLogo(this)"
+                            >
+                            <label for="logoInput" class="block text-center cursor-pointer">
+                                <i data-lucide="upload-cloud" class="w-8 h-8 text-rose-main mx-auto mb-2"></i>
+                                <p class="text-sm text-gray-dark font-medium">Click để upload</p>
+                                <p class="text-xs text-gray-medium mt-1">PNG, JPG, JPEG (Max 2MB)</p>
+                            </label>
+                            <div id="logoPreview" class="hidden mt-4 flex justify-center">
+                                <img id="previewImage" src="" alt="Preview" class="max-h-20 object-contain rounded-lg border border-gray-light">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Contact Info -->
             <div class="bg-white rounded-2xl shadow-sm p-6">
                 <h2 class="text-xl font-bold text-gray-dark mb-6 flex items-center gap-2">
@@ -94,6 +147,46 @@ Cài đặt hệ thống
 
 <script>
     lucide.createIcons();
+
+    function previewLogo(input) {
+        const preview = document.getElementById('logoPreview');
+        const previewImage = document.getElementById('previewImage');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                preview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.classList.add('hidden');
+        }
+    }
+
+    function deleteLogo() {
+        if (confirm('Bạn có chắc muốn xóa logo?')) {
+            fetch('/admin/cai-dat/delete-logo', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Đã xóa logo', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast(data.message || 'Có lỗi xảy ra', 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Có lỗi xảy ra', 'error');
+            });
+        }
+    }
 
     function showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');

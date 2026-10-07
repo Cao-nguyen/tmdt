@@ -17,7 +17,7 @@ class SanPhamController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SanPham::with('danhMuc')->where('trang_thai', true);
+        $query = SanPham::with('danhMuc', 'hinhAnhs')->where('trang_thai', true);
 
         // Lọc theo danh mục
         if ($request->has('danh_muc')) {
@@ -58,7 +58,7 @@ class SanPhamController extends Controller
 
         // Phân trang
         $sanPhams = $query->paginate(12);
-        $danhMucs = DanhMuc::LayDanhSachHoatDong()->get();
+        $danhMucs = DanhMuc::where('trang_thai', true)->orderBy('sap_xep')->get();
 
         return view('san_pham.index', compact('sanPhams', 'danhMucs'));
     }

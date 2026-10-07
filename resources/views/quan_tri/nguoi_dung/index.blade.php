@@ -27,95 +27,95 @@ Quản lý người dùng
     <!-- Table -->
     <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
         <table class="w-full">
-            <thead class="bg-gradient-to-r from-rose-pastel to-pink-pastel">
+            <thead class="bg-gray-light">
                 <tr>
-                    <th class="px-6 py-4 text-left">
-                        <input type="checkbox" id="selectAll" class="w-4 h-4 rounded border-gray-light text-rose-main focus:ring-rose-main cursor-pointer">
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">
+                        <input type="checkbox" id="selectAll" class="w-4 h-4 rounded border-gray-light cursor-pointer">
                     </th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">ID</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Thông tin</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Email</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Vai trò</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Trạng thái</th>
-                    <th class="px-6 py-4 text-center text-sm font-semibold text-gray-dark">Hành động</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Thông tin</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Email</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Vai trò</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Trạng thái</th>
+                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-dark uppercase tracking-wide">Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($users as $user)
-                    <tr class="border-b border-gray-light hover:bg-gradient-to-r hover:from-rose-pastel/50 hover:to-pink-pastel/50 transition-all duration-200 group">
-                        <td class="px-6 py-5">
-                            <input type="checkbox" class="user-checkbox w-4 h-4 rounded border-gray-light text-rose-main focus:ring-rose-main cursor-pointer" value="{{ $user->id }}" onchange="updateSelectedCount()">
+                    <tr class="border-b border-gray-light hover:bg-gray-light/50 transition-colors">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" class="user-checkbox w-4 h-4 rounded border-gray-light cursor-pointer" value="{{ $user->id }}" onchange="updateSelectedCount()">
                         </td>
-                        <td class="px-6 py-5 text-sm text-gray-dark font-semibold">{{ $user->id }}</td>
-                        <td class="px-6 py-5">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-rose-pastel to-pink-pastel rounded-full flex items-center justify-center shadow-sm">
-                                    <i data-lucide="user" class="w-6 h-6 text-rose-main"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-dark group-hover:text-rose-main transition-colors">{{ $user->ho_ten }}</p>
-                                    <p class="text-xs text-gray-medium">Đã đăng ký: {{ $user->created_at->format('d/m/Y') }}</p>
+                        <td class="px-4 py-4 text-xs text-gray-dark font-semibold">{{ $user->id }}</td>
+                        <td class="px-4 py-4">
+                            <div class="flex items-center gap-2">
+                                @if($user->anh_dai_dien)
+                                    <img src="{{ asset($user->anh_dai_dien) }}" alt="{{ $user->ho_ten }}" class="w-8 h-8 rounded-lg object-cover flex-shrink-0">
+                                @else
+                                    <div class="w-8 h-8 bg-gradient-to-br from-rose-pastel to-pink-pastel rounded-lg flex items-center justify-center text-rose-main font-bold text-sm flex-shrink-0">
+                                        {{ substr($user->ho_ten, 0, 1) }}
+                                    </div>
+                                @endif
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-dark truncate">{{ $user->ho_ten }}</p>
+                                    <p class="text-xs text-gray-medium">{{ $user->created_at->format('d/m/Y') }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-5 text-sm text-gray-dark">{{ $user->email }}</td>
-                        <td class="px-6 py-5">
+                        <td class="px-4 py-4 text-xs text-gray-dark truncate">{{ $user->email }}</td>
+                        <td class="px-4 py-4">
                             @if($user->role === 'admin')
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-purple-pastel text-purple-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="shield" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-pastel text-purple-main rounded text-xs font-semibold">
+                                    <i data-lucide="shield" class="w-3 h-3"></i>
                                     Admin
                                 </span>
                             @elseif($user->role === 'nhan_vien')
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-blue-pastel text-blue-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="briefcase" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-blue-pastel text-blue-main rounded text-xs font-semibold">
+                                    <i data-lucide="briefcase" class="w-3 h-3"></i>
                                     Nhân viên
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-green-pastel text-green-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="user" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-pastel text-green-main rounded text-xs font-semibold">
+                                    <i data-lucide="user" class="w-3 h-3"></i>
                                     Khách hàng
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-5">
+                        <td class="px-4 py-4">
                             @if($user->email_verified_at)
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-green-pastel text-green-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-pastel text-green-main rounded text-xs font-semibold">
+                                    <i data-lucide="check-circle" class="w-3 h-3"></i>
                                     Đã xác minh
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-pastel text-yellow-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="clock" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-yellow-pastel text-yellow-main rounded text-xs font-semibold">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
                                     Chưa xác minh
                                 </span>
                             @endif
-                            <button onclick="toggleEmailVerification({{ $user->id }}, {{ $user->email_verified_at ? 'false' : 'true' }})" class="ml-2 w-8 h-8 bg-blue-pastel text-blue-main rounded-lg flex items-center justify-center hover:bg-blue-light transition-colors" title="Đổi trạng thái xác minh">
-                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            <button onclick="toggleEmailVerification({{ $user->id }}, {{ $user->email_verified_at ? 'false' : 'true' }})" class="ml-1 w-6 h-6 bg-blue-pastel text-blue-main rounded flex items-center justify-center hover:bg-blue-light transition-colors" title="Đổi trạng thái">
+                                <i data-lucide="refresh-cw" class="w-3 h-3"></i>
                             </button>
                         </td>
-                        <td class="px-6 py-5">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="showEditModal({{ $user->id }})" class="w-10 h-10 bg-blue-pastel text-blue-main rounded-xl flex items-center justify-center hover:bg-blue-light hover:scale-110 transition-all shadow-sm" title="Sửa">
-                                    <i data-lucide="edit-2" class="w-5 h-5"></i>
+                        <td class="px-4 py-4">
+                            <div class="flex items-center justify-center gap-1">
+                                <button onclick="showEditModal({{ $user->id }})" class="w-8 h-8 bg-blue-pastel text-blue-main rounded-lg flex items-center justify-center hover:bg-blue-light transition-colors" title="Sửa">
+                                    <i data-lucide="edit-2" class="w-4 h-4"></i>
                                 </button>
-                                <button onclick="showDeleteModal({{ $user->id }}, '{{ $user->name }}')" class="w-10 h-10 bg-red-pastel text-red-main rounded-xl flex items-center justify-center hover:bg-red-light hover:scale-110 transition-all shadow-sm" title="Xóa">
-                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                <button onclick="showDeleteModal({{ $user->id }}, '{{ $user->ho_ten }}')" class="w-8 h-8 bg-red-pastel text-red-main rounded-lg flex items-center justify-center hover:bg-red-light transition-colors" title="Xóa">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center gap-6">
-                                <div class="w-20 h-20 bg-gray-light rounded-full flex items-center justify-center">
-                                    <i data-lucide="users" class="w-10 h-10 text-gray-medium"></i>
+                        <td colspan="7" class="px-4 py-12 text-center">
+                            <div class="flex flex-col items-center gap-4">
+                                <div class="w-16 h-16 bg-gray-light rounded-full flex items-center justify-center">
+                                    <i data-lucide="users" class="w-8 h-8 text-gray-medium"></i>
                                 </div>
-                                <p class="text-gray-medium text-lg">Chưa có người dùng nào</p>
-                                <button onclick="showCreateModal()" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-rose-main to-pink-main text-white rounded-2xl hover:shadow-lg hover:scale-105 transition-all font-medium">
-                                    <i data-lucide="user-plus" class="w-5 h-5"></i>
-                                    <span>Thêm người dùng mới</span>
-                                </button>
+                                <p class="text-gray-medium">Chưa có người dùng nào</p>
                             </div>
                         </td>
                     </tr>

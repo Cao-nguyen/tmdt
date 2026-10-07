@@ -20,20 +20,24 @@
                 <a href="/san-pham" class="px-4 py-2 rounded-full text-sm font-medium {{ !request()->has('danh_muc') ? 'bg-rose-main text-white' : 'bg-rose-pastel text-rose-main hover:bg-rose-light' }} transition-colors">
                     Tất cả
                 </a>
-                @foreach($danhMucs as $danhMuc)
-                <a href="/san-pham?danh_muc={{ $danhMuc->slug }}" class="px-4 py-2 rounded-full text-sm font-medium {{ request()->danh_muc == $danhMuc->slug ? 'bg-rose-main text-white' : 'bg-rose-pastel text-rose-main hover:bg-rose-light' }} transition-colors">
-                    {{ $danhMuc->ten_danh_muc }}
-                </a>
-                @endforeach
+                @if($danhMucs->count() > 0)
+                    @foreach($danhMucs as $danhMuc)
+                    <a href="/san-pham?danh_muc={{ $danhMuc->slug }}" class="px-4 py-2 rounded-full text-sm font-medium {{ request()->danh_muc == $danhMuc->slug ? 'bg-rose-main text-white' : 'bg-rose-pastel text-rose-main hover:bg-rose-light' }} transition-colors">
+                        {{ $danhMuc->ten_danh_muc }}
+                    </a>
+                    @endforeach
+                @else
+                    <span class="text-gray-medium text-sm">Chưa có danh mục</span>
+                @endif
             </div>
 
             <!-- Sort Filter -->
             <div class="flex items-center gap-4">
                 <select onchange="window.location.href=this.value" class="px-4 py-2 rounded-lg border border-rose-pastel text-gray-dark outline-none focus:ring-2 focus:ring-rose-main">
-                    <option value="/san-pham?{{ request()->except('sap_xep') }}&sap_xep=moi-nhat" {{ request()->sap_xep == 'moi-nhat' || !request()->has('sap_xep') ? 'selected' : '' }}>Mới nhất</option>
-                    <option value="/san-pham?{{ request()->except('sap_xep') }}&sap_xep=gia-tang" {{ request()->sap_xep == 'gia-tang' ? 'selected' : '' }}>Giá tăng dần</option>
-                    <option value="/san-pham?{{ request()->except('sap_xep') }}&sap_xep=gia-giam" {{ request()->sap_xep == 'gia-giam' ? 'selected' : '' }}>Giá giảm dần</option>
-                    <option value="/san-pham?{{ request()->except('sap_xep') }}&sap_xep=ban-chay" {{ request()->sap_xep == 'ban-chay' ? 'selected' : '' }}>Bán chạy</option>
+                    <option value="/san-pham?{{ request()->fullUrlWithQuery(['sap_xep' => 'moi-nhat']) }}" {{ request()->sap_xep == 'moi-nhat' || !request()->has('sap_xep') ? 'selected' : '' }}>Mới nhất</option>
+                    <option value="/san-pham?{{ request()->fullUrlWithQuery(['sap_xep' => 'gia-tang']) }}" {{ request()->sap_xep == 'gia-tang' ? 'selected' : '' }}>Giá tăng dần</option>
+                    <option value="/san-pham?{{ request()->fullUrlWithQuery(['sap_xep' => 'gia-giam']) }}" {{ request()->sap_xep == 'gia-giam' ? 'selected' : '' }}>Giá giảm dần</option>
+                    <option value="/san-pham?{{ request()->fullUrlWithQuery(['sap_xep' => 'ban-chay']) }}" {{ request()->sap_xep == 'ban-chay' ? 'selected' : '' }}>Bán chạy</option>
                 </select>
             </div>
         </div>
@@ -48,9 +52,13 @@
             @foreach($sanPhams as $sanPham)
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-2xl transition-all">
                 <div class="relative">
+                    @if($sanPham->hinhAnhs && $sanPham->hinhAnhs->count() > 0)
+                    <img src="{{ $sanPham->hinhAnhs->first()->duong_dan }}" alt="{{ $sanPham->ten_san_pham }}" class="w-full h-64 object-cover">
+                    @else
                     <div class="h-64 bg-gradient-to-br from-rose-pastel to-pink-pastel flex items-center justify-center">
                         <i class="fas fa-spa text-6xl text-rose-main opacity-60"></i>
                     </div>
+                    @endif
                     @if($sanPham->san_pham_moi)
                     <span class="absolute top-4 left-4 bg-green-main text-white text-xs font-bold px-3 py-1 rounded-full">Mới</span>
                     @endif

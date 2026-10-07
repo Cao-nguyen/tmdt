@@ -31,9 +31,9 @@
         <div class="container mx-auto px-4 h-20 flex items-center justify-between">
             <!-- Logo -->
             <a href="/" class="flex items-center gap-3 group">
-                <div class="w-12 h-12 bg-gradient-to-br from-rose-pastel to-rose-light rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                    <i data-lucide="flower-2" class="w-6 h-6 text-rose-main"></i>
-                </div>
+                @if($logo = \App\Models\Setting::get('site_logo'))
+                <img src="{{ asset($logo) }}" alt="Flower Shop" class="h-12 object-contain">
+                @endif
                 <div>
                     <span class="font-serif text-2xl font-bold text-gray-dark group-hover:text-rose-main transition-colors">Flower Shop</span>
                     <p class="text-xs text-gray-medium">Tinh hoa hoa tươi</p>

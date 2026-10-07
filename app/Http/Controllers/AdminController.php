@@ -364,7 +364,7 @@ class AdminController extends Controller
                     $sanPham->gia_khuyen_mai = $request->gia_ban - $giamGia;
                 } else {
                     // Giảm theo số tiền VNĐ
-                    $sanPham->gia_khuyen_mai = $request->gia_khuyen_mai;
+                    $sanPham->gia_khuyen_mai = $request->gia_ban - $request->gia_khuyen_mai;
                 }
             } else {
                 $sanPham->gia_khuyen_mai = null;
@@ -498,10 +498,12 @@ class AdminController extends Controller
             // Xử lý giảm giá theo loại
             if ($request->has('gia_khuyen_mai') && $request->gia_khuyen_mai > 0) {
                 if ($request->loai_giam_gia === 'phan_tram') {
+                    // Tính giá giảm theo phần trăm
                     $giamGia = ($request->gia_ban * $request->gia_khuyen_mai) / 100;
                     $sanPham->gia_khuyen_mai = $request->gia_ban - $giamGia;
                 } else {
-                    $sanPham->gia_khuyen_mai = $request->gia_khuyen_mai;
+                    // Giảm theo số tiền VNĐ
+                    $sanPham->gia_khuyen_mai = $request->gia_ban - $request->gia_khuyen_mai;
                 }
             } else {
                 $sanPham->gia_khuyen_mai = null;
@@ -555,10 +557,12 @@ class AdminController extends Controller
             // Xử lý giảm giá theo loại
             if ($request->has('gia_khuyen_mai') && $request->gia_khuyen_mai > 0) {
                 if ($request->loai_giam_gia === 'phan_tram') {
+                    // Tính giá giảm theo phần trăm
                     $giamGia = ($request->gia_ban * $request->gia_khuyen_mai) / 100;
                     $sanPham->gia_khuyen_mai = $request->gia_ban - $giamGia;
                 } else {
-                    $sanPham->gia_khuyen_mai = $request->gia_khuyen_mai;
+                    // Giảm theo số tiền VNĐ
+                    $sanPham->gia_khuyen_mai = $request->gia_ban - $request->gia_khuyen_mai;
                 }
             } else {
                 $sanPham->gia_khuyen_mai = null;
@@ -628,12 +632,32 @@ class AdminController extends Controller
         if (!auth()->check() || auth()->user()->role !== 'admin') {
             return redirect('/')->with('thong_bao_loi', 'Bạn không có quyền truy cập!');
         }
-        
+
         // Eager loading để tránh N+1 query
         $danhMucs = DanhMuc::with('sanPhams')->orderBy('sap_xep')->orderBy('created_at', 'desc')->get();
         return view('quan_tri.danh_muc.index', compact('danhMucs'));
     }
-    
+
+    /**
+     * Hàm trả về dữ liệu danh mục dưới dạng JSON
+     */
+    public function danhMucData($id)
+    {
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            return response()->json(['success' => false, 'message' => 'Bạn không có quyền truy cập!'], 403);
+        }
+
+        try {
+            $danhMuc = DanhMuc::findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $danhMuc
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy danh mục'], 404);
+        }
+    }
+
     /**
      * Hàm hiển thị form tạo danh mục mới
      */
@@ -890,11 +914,42 @@ class AdminController extends Controller
             $data = $request->all();
             unset($data['_token']);
 
+            // Xử lý upload logo
+            if ($request->hasFile('site_logo')) {
+                $file = $request->file('site_logo');
+                $fileName = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads'), $fileName);
+                \App\Models\Setting::set('site_logo', 'uploads/' . $fileName);
+                unset($data['site_logo']);
+            }
+
             foreach ($data as $key => $value) {
                 \App\Models\Setting::set($key, $value);
             }
 
             return response()->json(['success' => true, 'message' => 'Đã cập nhật cài đặt!']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Hàm xóa logo
+     */
+    public function deleteLogo()
+    {
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            return response()->json(['success' => false, 'message' => 'Bạn không có quyền truy cập!'], 403);
+        }
+
+        try {
+            $logoPath = \App\Models\Setting::get('site_logo');
+            if ($logoPath && file_exists(public_path($logoPath))) {
+                unlink(public_path($logoPath));
+            }
+            \App\Models\Setting::set('site_logo', '');
+
+            return response()->json(['success' => true, 'message' => 'Đã xóa logo!']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }

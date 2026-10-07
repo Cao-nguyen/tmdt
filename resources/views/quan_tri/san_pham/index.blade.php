@@ -16,101 +16,97 @@
 </div>
 
 <!-- Table Card -->
-<div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-light">
+<div class="bg-white rounded-2xl shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr class="bg-gradient-to-r from-rose-pastel to-pink-pastel border-b-2 border-rose-pastel">
-                    <th class="px-6 py-5 text-left text-sm font-bold text-gray-dark tracking-wide uppercase">ID</th>
-                    <th class="px-6 py-5 text-left text-sm font-bold text-gray-dark tracking-wide uppercase">Sản phẩm</th>
-                    <th class="px-6 py-5 text-left text-sm font-bold text-gray-dark tracking-wide uppercase">Danh mục</th>
-                    <th class="px-6 py-5 text-left text-sm font-bold text-gray-dark tracking-wide uppercase">Giá</th>
-                    <th class="px-6 py-5 text-left text-sm font-bold text-gray-dark tracking-wide uppercase">Số lượng</th>
-                    <th class="px-6 py-5 text-left text-sm font-bold text-gray-dark tracking-wide uppercase">Trạng thái</th>
-                    <th class="px-6 py-5 text-center text-sm font-bold text-gray-dark tracking-wide uppercase">Hành động</th>
+                <tr class="bg-gray-light">
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Sản phẩm</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Danh mục</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Giá</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Số lượng</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Trạng thái</th>
+                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-dark uppercase tracking-wide">Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($sanPhams as $sanPham)
-                    <tr class="border-b border-gray-light hover:bg-gradient-to-r hover:from-rose-pastel/50 hover:to-pink-pastel/50 transition-all duration-200 group">
-                        <td class="px-6 py-5 text-sm text-gray-dark font-semibold">{{ $sanPham->id }}</td>
-                        <td class="px-6 py-5">
-                            <div class="flex items-center gap-4">
+                    <tr class="border-b border-gray-light hover:bg-gray-light/50 transition-colors">
+                        <td class="px-4 py-4 text-xs text-gray-dark font-semibold">{{ $sanPham->id }}</td>
+                        <td class="px-4 py-4">
+                            <div class="flex items-center gap-2">
                                 @if($sanPham->hinhAnhs->isNotEmpty())
-                                    <img src="{{ $sanPham->hinhAnhs->first()->duong_dan }}" alt="{{ $sanPham->ten_san_pham }}" class="w-14 h-14 object-cover rounded-xl shadow-sm group-hover:scale-110 transition-transform">
+                                    <img src="{{ $sanPham->hinhAnhs->first()->duong_dan }}" alt="{{ $sanPham->ten_san_pham }}" class="w-10 h-10 object-cover rounded-lg flex-shrink-0">
                                 @else
-                                    <div class="w-14 h-14 bg-gradient-to-br from-rose-pastel to-pink-pastel rounded-xl flex items-center justify-center shadow-sm">
-                                        <i data-lucide="image" class="w-6 h-6 text-rose-main"></i>
+                                    <div class="w-10 h-10 bg-gradient-to-br from-rose-pastel to-pink-pastel rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="image" class="w-5 h-5 text-rose-main"></i>
                                     </div>
                                 @endif
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-dark group-hover:text-rose-main transition-colors">{{ $sanPham->ten_san_pham }}</p>
-                                    <p class="text-xs text-gray-medium">{{ $sanPham->slug }}</p>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-medium text-gray-dark truncate">{{ $sanPham->ten_san_pham }}</p>
+                                    <p class="text-xs text-gray-medium truncate">{{ $sanPham->slug }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-5">
+                        <td class="px-4 py-4">
                             @if($sanPham->danhMuc)
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-purple-pastel text-purple-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="tag" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-pastel text-purple-main rounded text-xs font-semibold">
+                                    <i data-lucide="tag" class="w-3 h-3"></i>
                                     {{ $sanPham->danhMuc->ten_danh_muc }}
                                 </span>
                             @else
-                                <span class="text-gray-medium text-sm">Chưa phân loại</span>
+                                <span class="text-gray-medium text-xs">Chưa phân loại</span>
                             @endif
                         </td>
-                        <td class="px-6 py-5">
+                        <td class="px-4 py-4">
                             <div class="flex flex-col">
                                 @if($sanPham->gia_khuyen_mai && $sanPham->gia_khuyen_mai < $sanPham->gia_ban)
-                                    <span class="text-xs text-gray-medium line-through">{{ number_format($sanPham->gia_ban, 0, ',', '.') }} VNĐ</span>
-                                    <span class="text-sm font-semibold text-red-main">{{ number_format($sanPham->gia_khuyen_mai, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-xs text-gray-medium line-through">{{ number_format($sanPham->gia_ban, 0, ',', '.') }} đ</span>
+                                    <span class="text-xs font-semibold text-red-main">{{ number_format($sanPham->gia_khuyen_mai, 0, ',', '.') }} đ</span>
                                 @else
-                                    <span class="text-sm font-semibold text-gray-dark">{{ number_format($sanPham->gia_ban, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-xs font-semibold text-gray-dark">{{ number_format($sanPham->gia_ban, 0, ',', '.') }} đ</span>
                                 @endif
                             </div>
                         </td>
-                        <td class="px-6 py-5">
-                            <span class="inline-flex items-center gap-2 px-4 py-2 @if($sanPham->so_luong > 0) bg-green-pastel text-green-main @else bg-red-pastel text-red-main @endif rounded-xl text-sm font-semibold shadow-sm">
-                                <i data-lucide="package" class="w-4 h-4"></i>
+                        <td class="px-4 py-4">
+                            <span class="inline-flex items-center gap-1 px-2 py-1 @if($sanPham->so_luong > 0) bg-green-pastel text-green-main @else bg-red-pastel text-red-main @endif rounded text-xs font-semibold">
+                                <i data-lucide="package" class="w-3 h-3"></i>
                                 {{ $sanPham->so_luong }}
                             </span>
                         </td>
-                        <td class="px-6 py-5">
+                        <td class="px-4 py-4">
                             @if($sanPham->trang_thai)
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-green-pastel text-green-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-pastel text-green-main rounded text-xs font-semibold">
+                                    <i data-lucide="check-circle" class="w-3 h-3"></i>
                                     Hoạt động
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-red-pastel text-red-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-red-pastel text-red-main rounded text-xs font-semibold">
+                                    <i data-lucide="x-circle" class="w-3 h-3"></i>
                                     Ẩn
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-5">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="showEditModal({{ $sanPham->id }})" class="w-10 h-10 bg-blue-pastel text-blue-main rounded-xl flex items-center justify-center hover:bg-blue-light hover:scale-110 transition-all shadow-sm" title="Sửa">
-                                    <i data-lucide="edit-2" class="w-5 h-5"></i>
+                        <td class="px-4 py-4">
+                            <div class="flex items-center justify-center gap-1">
+                                <button onclick="showEditModal({{ $sanPham->id }})" class="w-8 h-8 bg-blue-pastel text-blue-main rounded-lg flex items-center justify-center hover:bg-blue-light transition-colors" title="Sửa">
+                                    <i data-lucide="edit-2" class="w-4 h-4"></i>
                                 </button>
-                                <button onclick="showDeleteModal({{ $sanPham->id }}, '{{ $sanPham->ten_san_pham }}')" class="w-10 h-10 bg-red-pastel text-red-main rounded-xl flex items-center justify-center hover:bg-red-light hover:scale-110 transition-all shadow-sm" title="Xóa">
-                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                <button onclick="showDeleteModal({{ $sanPham->id }}, '{{ $sanPham->ten_san_pham }}')" class="w-8 h-8 bg-red-pastel text-red-main rounded-lg flex items-center justify-center hover:bg-red-light transition-colors" title="Xóa">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center gap-6">
-                                <div class="w-20 h-20 bg-gray-light rounded-full flex items-center justify-center">
-                                    <i data-lucide="inbox" class="w-10 h-10 text-gray-medium"></i>
+                        <td colspan="7" class="px-4 py-12 text-center">
+                            <div class="flex flex-col items-center gap-4">
+                                <div class="w-16 h-16 bg-gray-light rounded-full flex items-center justify-center">
+                                    <i data-lucide="inbox" class="w-8 h-8 text-gray-medium"></i>
                                 </div>
-                                <p class="text-gray-medium text-lg">Chưa có sản phẩm nào</p>
-                                <button onclick="showCreateModal()" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-rose-main to-pink-main text-white rounded-2xl hover:shadow-lg hover:scale-105 transition-all font-medium">
-                                    <i data-lucide="plus" class="w-5 h-5"></i>
-                                    <span>Thêm sản phẩm mới</span>
-                                </button>
+                                <p class="text-gray-medium">Chưa có sản phẩm nào</p>
                             </div>
                         </td>
                     </tr>
@@ -166,20 +162,21 @@
 
                     <!-- Giá bán -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-dark mb-1.5">Giá bán <span class="text-red-main">*</span></label>
-                        <input type="number" name="gia_ban" id="giaBan" required min="0" class="w-full px-3 py-2.5 border border-gray-light rounded-lg focus:ring-2 focus:ring-rose-main focus:border-transparent text-sm" placeholder="0">
+                        <label class="block text-sm font-medium text-gray-dark mb-1.5">Giá bán (đ) <span class="text-red-main">*</span></label>
+                        <input type="text" name="gia_ban" id="giaBan" required min="0" class="w-full px-3 py-2.5 border border-gray-light rounded-lg focus:ring-2 focus:ring-rose-main focus:border-transparent text-sm" placeholder="0">
                     </div>
 
                     <!-- Giảm giá -->
                     <div>
                         <label class="block text-sm font-medium text-gray-dark mb-1.5">Giảm giá</label>
                         <div class="flex gap-2">
-                            <select name="loai_giam_gia" id="loaiGiamGia" class="w-24 px-3 py-2.5 border border-gray-light rounded-lg focus:ring-2 focus:ring-rose-main focus:border-transparent text-sm">
-                                <option value="vnđ">VNĐ</option>
+                            <select name="loai_giam_gia" id="loaiGiamGia" class="w-20 px-3 py-2.5 border border-gray-light rounded-lg focus:ring-2 focus:ring-rose-main focus:border-transparent text-sm">
                                 <option value="phan_tram">%</option>
+                                <option value="vnđ">VNĐ</option>
                             </select>
                             <input type="number" name="gia_khuyen_mai" id="giaKhuyenMai" min="0" class="flex-1 px-3 py-2.5 border border-gray-light rounded-lg focus:ring-2 focus:ring-rose-main focus:border-transparent text-sm" placeholder="0">
                         </div>
+                        <p class="text-xs text-gray-medium mt-1">Nhập 0 nếu không giảm giá</p>
                     </div>
 
                     <!-- Ảnh sản phẩm -->
@@ -285,6 +282,12 @@ function showCreateModal() {
     document.getElementById('imagePreview').innerHTML = '';
     document.getElementById('imagePreview').classList.add('hidden');
     document.getElementById('imagePlaceholder').classList.remove('hidden');
+    
+    // Reset giá bán input
+    const giaBanInput = document.getElementById('giaBan');
+    giaBanInput.value = '';
+    giaBanInput.dataset.rawValue = '';
+    
     document.getElementById('productModal').classList.remove('hidden');
 }
 
@@ -305,8 +308,23 @@ function showEditModal(id) {
                 document.getElementById('tenSanPham').value = product.ten_san_pham;
                 document.getElementById('danhMucId').value = product.danh_muc_id;
                 document.getElementById('soLuong').value = product.so_luong;
-                document.getElementById('giaBan').value = product.gia_ban;
-                document.getElementById('giaKhuyenMai').value = product.gia_khuyen_mai || '';
+                
+                // Load giá bán đúng cách (ép kiểu, làm tròn, format)
+                loadGiaBanInput(product.gia_ban);
+                
+                // Tính giảm giá
+                if (product.gia_khuyen_mai && product.gia_khuyen_mai < product.gia_ban) {
+                    const giamGia = product.gia_ban - product.gia_khuyen_mai;
+                    const phanTram = (giamGia / product.gia_ban * 100).toFixed(2);
+                    document.getElementById('loaiGiamGia').value = 'phan_tram';
+                    document.getElementById('giaKhuyenMai').value = phanTram;
+                    document.getElementById('giaKhuyenMai').dataset.rawValue = phanTram;
+                } else {
+                    document.getElementById('loaiGiamGia').value = 'phan_tram';
+                    document.getElementById('giaKhuyenMai').value = '';
+                    document.getElementById('giaKhuyenMai').dataset.rawValue = '';
+                }
+                
                 document.getElementById('moTaChiTiet').value = product.mo_ta_chi_tiet || '';
                 document.getElementById('trangThai').checked = product.trang_thai;
 
@@ -359,17 +377,15 @@ function submitForm() {
     const submitBtnText = document.getElementById('submitBtnText');
     const originalText = submitBtnText.textContent;
 
+    // Convert giá bán từ format về số gốc bằng parseVND
+    const giaBanInput = document.getElementById('giaBan');
+    if (giaBanInput.dataset.rawValue) {
+        formData.set('gia_ban', giaBanInput.dataset.rawValue);
+    }
+
     submitBtn.disabled = true;
     submitSpinner.classList.remove('hidden');
     submitBtnText.textContent = 'Đang xử lý...';
-
-    // Debug: log form data
-    console.log('Form action:', form.action);
-    console.log('Form method:', form.method);
-    console.log('FormData entries:');
-    for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-    }
 
     fetch(form.action, {
         method: form.method,
@@ -492,6 +508,27 @@ function updateGiamGiaLabel() {
         label.textContent = select.value === 'vnđ' ? 'VNĐ' : '%';
     }
 }
+
+// Hàm load giá trị vào input giá bán
+function loadGiaBanInput(rawValue) {
+    const input = document.getElementById('giaBan');
+    loadCurrencyInput(input, rawValue, true);
+}
+
+// Áp dụng setupCurrencyInput cho input giá bán
+const giaBanInput = document.getElementById('giaBan');
+if (giaBanInput) {
+    setupCurrencyInput(giaBanInput, true);
+}
+
+// Khi focus vào input giảm giá
+document.getElementById('giaKhuyenMai').addEventListener('focus', function() {
+    this.value = this.dataset.rawValue || '';
+});
+
+document.getElementById('giaKhuyenMai').addEventListener('blur', function() {
+    this.dataset.rawValue = this.value;
+});
 
 // Toast notification
 function showToast(message, type = 'success') {

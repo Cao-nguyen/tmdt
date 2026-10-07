@@ -27,99 +27,99 @@ Quản lý đơn hàng
         <table class="w-full">
             <thead class="bg-gray-light">
                 <tr>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">
-                        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()" class="w-5 h-5 rounded border-gray-light">
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">
+                        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()" class="w-4 h-4 rounded border-gray-light">
                     </th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Mã đơn</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Khách hàng</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Tổng tiền</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Trạng thái</th>
-                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-dark">Ngày đặt</th>
-                    <th class="px-6 py-4 text-center text-sm font-semibold text-gray-dark">Hành động</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Mã đơn</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Khách hàng</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Tổng tiền</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Trạng thái</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-dark uppercase tracking-wide">Ngày đặt</th>
+                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-dark uppercase tracking-wide">Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($donHangs as $donHang)
                     <tr class="border-b border-gray-light hover:bg-gray-light/50 transition-colors">
-                        <td class="px-6 py-5">
-                            <input type="checkbox" class="order-checkbox w-5 h-5 rounded border-gray-light" value="{{ $donHang->id }}">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" class="order-checkbox w-4 h-4 rounded border-gray-light" value="{{ $donHang->id }}">
                         </td>
-                        <td class="px-6 py-5">
-                            <code class="px-3 py-1 bg-gray-light rounded-lg text-sm text-gray-dark">{{ $donHang->ma_don_hang }}</code>
+                        <td class="px-4 py-4">
+                            <code class="px-2 py-1 bg-gray-light rounded text-xs text-gray-dark">{{ $donHang->ma_don_hang }}</code>
                         </td>
-                        <td class="px-6 py-5">
-                            <div class="flex items-center gap-3">
+                        <td class="px-4 py-4">
+                            <div class="flex items-center gap-2">
                                 @if($donHang->user->anh_dai_dien)
-                                    <img src="{{ asset($donHang->user->anh_dai_dien) }}" alt="{{ $donHang->user->name }}" class="w-10 h-10 rounded-xl object-cover shadow-lg flex-shrink-0">
+                                    <img src="{{ asset($donHang->user->anh_dai_dien) }}" alt="{{ $donHang->user->name }}" class="w-8 h-8 rounded-lg object-cover flex-shrink-0">
                                 @else
-                                    <div class="w-10 h-10 bg-gradient-to-br from-rose-pastel to-pink-pastel rounded-xl flex items-center justify-center text-rose-main font-bold text-lg shadow-lg flex-shrink-0">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-rose-pastel to-pink-pastel rounded-lg flex items-center justify-center text-rose-main font-bold text-sm flex-shrink-0">
                                         {{ substr($donHang->user->ho_ten, 0, 1) }}
                                     </div>
                                 @endif
-                                <div>
-                                    <p class="font-medium text-gray-dark">{{ $donHang->user->ho_ten }}</p>
-                                    <p class="text-sm text-gray-medium">{{ $donHang->user->email }}</p>
+                                <div class="min-w-0">
+                                    <p class="font-medium text-gray-dark text-sm truncate">{{ $donHang->user->ho_ten }}</p>
+                                    <p class="text-xs text-gray-medium truncate">{{ $donHang->user->email }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-5">
-                            <p class="font-semibold text-gray-dark">{{ number_format($donHang->tong_tien, 0, ',', '.') }} đ</p>
+                        <td class="px-4 py-4">
+                            <p class="font-semibold text-gray-dark text-sm">{{ number_format($donHang->tong_tien, 0, ',', '.') }} đ</p>
                         </td>
-                        <td class="px-6 py-5">
+                        <td class="px-4 py-4">
                             @if($donHang->trang_thai == 'cho_xac_nhan')
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-pastel text-yellow-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="clock" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-yellow-pastel text-yellow-main rounded text-xs font-semibold">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
                                     Chờ xác nhận
                                 </span>
                             @elseif($donHang->trang_thai == 'da_xac_nhan')
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-blue-pastel text-blue-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-blue-pastel text-blue-main rounded text-xs font-semibold">
+                                    <i data-lucide="check-circle" class="w-3 h-3"></i>
                                     Đã xác nhận
                                 </span>
                             @elseif($donHang->trang_thai == 'dang_chuan_bi')
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-purple-pastel text-purple-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="package" class="w-4 h-4"></i>
-                                    Đang chuẩn bị
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-pastel text-purple-main rounded text-xs font-semibold">
+                                    <i data-lucide="package" class="w-3 h-3"></i>
+                                    Chuẩn bị
                                 </span>
                             @elseif($donHang->trang_thai == 'dang_giao')
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-pastel text-indigo-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="truck" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-indigo-pastel text-indigo-main rounded text-xs font-semibold">
+                                    <i data-lucide="truck" class="w-3 h-3"></i>
                                     Đang giao
                                 </span>
                             @elseif($donHang->trang_thai == 'da_giao')
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-green-pastel text-green-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-pastel text-green-main rounded text-xs font-semibold">
+                                    <i data-lucide="check-circle" class="w-3 h-3"></i>
                                     Đã giao
                                 </span>
                             @elseif($donHang->trang_thai == 'da_huy')
-                                <span class="inline-flex items-center gap-2 px-4 py-2 bg-red-pastel text-red-main rounded-xl text-sm font-semibold shadow-sm">
-                                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-red-pastel text-red-main rounded text-xs font-semibold">
+                                    <i data-lucide="x-circle" class="w-3 h-3"></i>
                                     Đã hủy
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-5 text-sm text-gray-medium">
-                            {{ $donHang->created_at->format('d/m/Y H:i') }}
+                        <td class="px-4 py-4 text-xs text-gray-medium">
+                            {{ $donHang->created_at->format('d/m/Y') }}
                         </td>
-                        <td class="px-6 py-5">
-                            <div class="flex items-center justify-center gap-2">
-                                <a href="/admin/don-hang/{{ $donHang->id }}" class="w-10 h-10 bg-blue-pastel text-blue-main rounded-xl flex items-center justify-center hover:bg-blue-light hover:scale-110 transition-all shadow-sm" title="Xem chi tiết">
-                                    <i data-lucide="eye" class="w-5 h-5"></i>
+                        <td class="px-4 py-4">
+                            <div class="flex items-center justify-center gap-1">
+                                <a href="/admin/don-hang/{{ $donHang->id }}" class="w-8 h-8 bg-blue-pastel text-blue-main rounded-lg flex items-center justify-center hover:bg-blue-light transition-colors" title="Xem chi tiết">
+                                    <i data-lucide="eye" class="w-4 h-4"></i>
                                 </a>
-                                <button onclick="deleteOrder({{ $donHang->id }})" class="w-10 h-10 bg-red-pastel text-red-main rounded-xl flex items-center justify-center hover:bg-red-light hover:scale-110 transition-all shadow-sm" title="Xóa đơn hàng">
-                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                <button onclick="deleteOrder({{ $donHang->id }})" class="w-8 h-8 bg-red-pastel text-red-main rounded-lg flex items-center justify-center hover:bg-red-light transition-colors" title="Xóa đơn hàng">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center gap-6">
-                                <div class="w-20 h-20 bg-gray-light rounded-full flex items-center justify-center">
-                                    <i data-lucide="shopping-bag" class="w-10 h-10 text-gray-medium"></i>
+                        <td colspan="7" class="px-4 py-12 text-center">
+                            <div class="flex flex-col items-center gap-4">
+                                <div class="w-16 h-16 bg-gray-light rounded-full flex items-center justify-center">
+                                    <i data-lucide="shopping-bag" class="w-8 h-8 text-gray-medium"></i>
                                 </div>
-                                <p class="text-gray-medium text-lg">Chưa có đơn hàng nào</p>
+                                <p class="text-gray-medium">Chưa có đơn hàng nào</p>
                             </div>
                         </td>
                     </tr>
