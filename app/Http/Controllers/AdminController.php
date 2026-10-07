@@ -387,8 +387,8 @@ class AdminController extends Controller
                         $uploadedFile = Cloudinary::upload($image->getRealPath(), [
                             'folder' => 'flower-shop/san-pham',
                             'transformation' => [
-                                'quality' => 'auto',
-                                'fetch_format' => 'auto',
+                                'quality' => 90,
+                                'fetch_format' => null,
                             ]
                         ]);
 

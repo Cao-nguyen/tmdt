@@ -8,8 +8,16 @@
         <!-- Ảnh sản phẩm -->
         <div>
             @if($sanPham->hinhAnhs && $sanPham->hinhAnhs->count() > 0)
-                <div class="aspect-square bg-gray-light rounded-2xl overflow-hidden">
-                    <img src="{{ $sanPham->hinhAnhs->first()->duong_dan }}" alt="{{ $sanPham->ten_san_pham }}" class="w-full h-full object-cover">
+                <div class="aspect-square bg-gray-light rounded-2xl overflow-hidden mb-4">
+                    <img id="mainImage" src="{{ $sanPham->hinhAnhs->first()->duong_dan }}" alt="{{ $sanPham->ten_san_pham }}" class="w-full h-full object-cover">
+                </div>
+                <!-- Gallery ảnh nhỏ -->
+                <div class="grid grid-cols-3 gap-2">
+                    @foreach($sanPham->hinhAnhs as $index => $hinhAnh)
+                        <div class="aspect-square bg-gray-light rounded-lg overflow-hidden cursor-pointer hover:ring-2 hover:ring-rose-main transition-all {{ $loop->first ? 'ring-2 ring-rose-main' : '' }}" onclick="changeMainImage('{{ $hinhAnh->duong_dan }}', this)">
+                            <img src="{{ $hinhAnh->duong_dan }}" alt="{{ $sanPham->ten_san_pham }}" class="w-full h-full object-cover">
+                        </div>
+                    @endforeach
                 </div>
             @else
                 <div class="aspect-square bg-gray-light rounded-2xl flex items-center justify-center">
@@ -68,6 +76,18 @@
 
 <script>
     lucide.createIcons();
+
+    function changeMainImage(src, element) {
+        document.getElementById('mainImage').src = src;
+        
+        // Xóa ring của tất cả
+        document.querySelectorAll('.aspect-square.rounded-lg').forEach(el => {
+            el.classList.remove('ring-2', 'ring-rose-main');
+        });
+        
+        // Thêm ring cho ảnh được chọn
+        element.classList.add('ring-2', 'ring-rose-main');
+    }
 
     function addToCart(sanPhamId) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
