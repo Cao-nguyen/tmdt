@@ -94,6 +94,16 @@ class SanPham extends Model
         return $this->hinhAnhs()->where('anh_chinh', true)->first();
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'san_pham_id');
+    }
+
+    public function trungBinhDanhGia()
+    {
+        return $this->reviews()->where('trang_thai', true)->avg('danh_gia');
+    }
+
     public function scopeNoiBat($query)
     {
         return $query->where('noi_bat', true)->where('trang_thai', true);

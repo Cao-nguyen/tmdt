@@ -43,6 +43,18 @@
                 @endif
             </div>
 
+            <div class="flex items-center gap-2 mb-6">
+                @php
+                    $avgRating = $sanPham->trungBinhDanhGia() ?: 0;
+                @endphp
+                <div class="flex gap-1">
+                    @for($i = 1; $i <= 5; $i++)
+                    <span class="text-lg {{ $i <= round($avgRating) ? 'text-yellow-400' : 'text-gray-300' }}">★</span>
+                    @endfor
+                </div>
+                <span class="text-gray-medium text-sm">({{ number_format($avgRating, 1) }}/5 - {{ $reviews->count() }} đánh giá)</span>
+            </div>
+
             <div class="mb-6">
                 <h3 class="font-semibold text-gray-dark mb-2">Mô tả</h3>
                 <div class="text-gray-medium leading-relaxed">{{ $sanPham->mo_ta_chi_tiet ?? $sanPham->mo_ta_ngan ?? 'Không có mô tả' }}</div>
@@ -74,8 +86,126 @@
     </div>
 </div>
 
+<!-- Phần đánh giá -->
+<div class="max-w-7xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-gray-dark mb-6">Đánh giá sản phẩm</h2>
+    
+    @if(auth()->check() && $daMua && !$daDanhGia)
+    <!-- Form đánh giá -->
+    <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm">
+        <h3 class="font-semibold text-gray-dark mb-4">Viết đánh giá của bạn</h3>
+        <form id="reviewForm" action="{{ route('san-pham.danh-gia', $sanPham->id) }}" method="POST">
+            @csrf
+            <div class="mb-4">
+                <label class="block text-gray-medium mb-2">Đánh giá của bạn</label>
+                <div class="flex gap-2" id="starRating">
+                    @for($i = 1; $i <= 5; $i++)
+                    <button type="button" class="text-3xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="{{ $i }}" onclick="setRating({{ $i }})">★</button>
+                    @endfor
+                </div>
+                <input type="hidden" name="danh_gia" id="danhGiaInput" value="5">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-medium mb-2">Nội dung đánh giá</label>
+                <textarea name="noi_dung" rows="4" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-main" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."></textarea>
+            </div>
+            <button type="submit" class="px-6 py-3 bg-rose-main text-white rounded-xl hover:bg-rose-dark transition-colors font-semibold">Gửi đánh giá</button>
+        </form>
+    </div>
+    @elseif(auth()->check() && $daDanhGia)
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-8">
+        <p class="text-green-main font-medium">Bạn đã đánh giá sản phẩm này rồi!</p>
+    </div>
+    @elseif(!auth()->check())
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-8">
+        <p class="text-gray-medium">Vui lòng <a href="{{ route('login') }}" class="text-rose-main font-semibold hover:underline">đăng nhập</a> để đánh giá sản phẩm.</p>
+    </div>
+    @elseif(!$daMua)
+    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-8">
+        <p class="text-yellow-700 font-medium">Bạn cần mua sản phẩm này để có thể đánh giá!</p>
+    </div>
+    @endif
+
+    <!-- Danh sách đánh giá -->
+    @if($reviews->count() > 0)
+    <div class="space-y-4">
+        @foreach($reviews as $review)
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="flex items-center gap-4 mb-3">
+                @if($review->user->anh_dai_dien)
+                <img src="{{ $review->user->anh_dai_dien }}" class="w-12 h-12 rounded-full object-cover">
+                @else
+                <div class="w-12 h-12 rounded-full bg-rose-pastel flex items-center justify-center">
+                    <i data-lucide="user" class="w-6 h-6 text-rose-main"></i>
+                </div>
+                @endif
+                <div>
+                    <p class="font-semibold text-gray-dark">{{ $review->user->ho_va_ten ?? $review->user->email }}</p>
+                    <div class="flex gap-1">
+                        @for($i = 1; $i <= 5; $i++)
+                        <span class="text-sm {{ $i <= $review->danh_gia ? 'text-yellow-400' : 'text-gray-300' }}">★</span>
+                        @endfor
+                    </div>
+                </div>
+            </div>
+            @if($review->noi_dung)
+            <p class="text-gray-medium">{{ $review->noi_dung }}</p>
+            @endif
+            <p class="text-sm text-gray-400 mt-2">{{ $review->created_at->format('d/m/Y H:i') }}</p>
+        </div>
+        @endforeach
+    </div>
+    @else
+    <div class="bg-gray-50 rounded-xl p-8 text-center">
+        <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+        <p class="text-gray-medium">Chưa có đánh giá nào cho sản phẩm này.</p>
+    </div>
+    @endif
+</div>
+
 <script>
     lucide.createIcons();
+
+    function setRating(rating) {
+        document.getElementById('danhGiaInput').value = rating;
+        const stars = document.querySelectorAll('#starRating button');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.remove('text-gray-300');
+                star.classList.add('text-yellow-400');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-300');
+            }
+        });
+    }
+
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra, vui lòng thử lại!');
+        });
+    });
 
     function changeMainImage(src, element) {
         document.getElementById('mainImage').src = src;

@@ -83,7 +83,83 @@ class SanPhamController extends Controller
             ->take(4)
             ->get();
 
-        return view('san_pham.show', compact('sanPham', 'sanPhamLienQuan'));
+        // Lấy đánh giá của sản phẩm
+        $reviews = \App\Models\Review::with('user')
+            ->where('san_pham_id', $sanPham->id)
+            ->where('trang_thai', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Kiểm tra user đã mua sản phẩm chưa
+        $daMua = false;
+        $daDanhGia = false;
+        if (auth()->check()) {
+            $donHang = \App\Models\DonHang::where('user_id', auth()->id())
+                ->whereHas('chiTietDonHangs', function($query) use ($sanPham) {
+                    $query->where('san_pham_id', $sanPham->id);
+                })
+                ->where('trang_thai', 'da_giao')
+                ->first();
+            
+            $daMua = $donHang !== null;
+            
+            $review = \App\Models\Review::where('user_id', auth()->id())
+                ->where('san_pham_id', $sanPham->id)
+                ->first();
+            $daDanhGia = $review !== null;
+        }
+
+        return view('san_pham.show', compact('sanPham', 'sanPhamLienQuan', 'reviews', 'daMua', 'daDanhGia'));
+    }
+
+    /**
+     * Xử lý đánh giá sản phẩm
+     */
+    public function danhGia(Request $request, $id)
+    {
+        if (!auth()->check()) {
+            return response()->json(['success' => false, 'message' => 'Vui lòng đăng nhập để đánh giá'], 401);
+        }
+
+        $request->validate([
+            'danh_gia' => 'required|integer|min:1|max:5',
+            'noi_dung' => 'nullable|string|max:1000',
+        ]);
+
+        $sanPham = SanPham::findOrFail($id);
+
+        // Kiểm tra user đã mua sản phẩm chưa
+        $donHang = \App\Models\DonHang::where('user_id', auth()->id())
+            ->whereHas('chiTietDonHangs', function($query) use ($sanPham) {
+                $query->where('san_pham_id', $sanPham->id);
+            })
+            ->where('trang_thai', 'da_giao')
+            ->first();
+
+        if (!$donHang) {
+            return response()->json(['success' => false, 'message' => 'Bạn chưa mua sản phẩm này nên không thể đánh giá'], 403);
+        }
+
+        // Kiểm tra user đã đánh giá chưa
+        $existingReview = \App\Models\Review::where('user_id', auth()->id())
+            ->where('san_pham_id', $sanPham->id)
+            ->first();
+
+        if ($existingReview) {
+            return response()->json(['success' => false, 'message' => 'Bạn đã đánh giá sản phẩm này rồi'], 400);
+        }
+
+        // Tạo đánh giá
+        $review = \App\Models\Review::create([
+            'user_id' => auth()->id(),
+            'san_pham_id' => $sanPham->id,
+            'don_hang_id' => $donHang->id,
+            'danh_gia' => $request->danh_gia,
+            'noi_dung' => $request->noi_dung,
+            'trang_thai' => true,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Đánh giá thành công!']);
     }
 
     /**
