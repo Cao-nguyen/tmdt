@@ -92,7 +92,7 @@
     
     @if(auth()->check() && $daMua && !$daDanhGia)
     <!-- Form đánh giá -->
-    <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm">
+    <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm border border-gray-100">
         <h3 class="font-semibold text-gray-dark mb-4">Viết đánh giá của bạn</h3>
         <form id="reviewForm" action="/san-pham/{{ $sanPham->id }}/danh-gia" method="POST">
             @csrf
@@ -107,21 +107,45 @@
             </div>
             <div class="mb-4">
                 <label class="block text-gray-medium mb-2">Nội dung đánh giá</label>
-                <textarea name="noi_dung" rows="4" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-main" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."></textarea>
+                <textarea name="noi_dung" rows="4" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-main focus:border-transparent transition-all" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."></textarea>
             </div>
-            <button type="submit" class="px-6 py-3 bg-rose-main text-white rounded-xl hover:bg-rose-dark transition-colors font-semibold">Gửi đánh giá</button>
+            <button type="submit" class="px-6 py-3 bg-gradient-to-r from-rose-main to-pink-main text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all font-semibold">Gửi đánh giá</button>
         </form>
     </div>
-    @elseif(auth()->check() && $daDanhGia)
-    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-8">
-        <p class="text-green-main font-medium">Bạn đã đánh giá sản phẩm này rồi!</p>
+    @elseif(auth()->check() && $userReview)
+    <!-- Form chỉnh sửa đánh giá -->
+    <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-gray-dark">Đánh giá của bạn</h3>
+            <button onclick="deleteReview({{ $userReview->id }})" class="text-red-500 hover:text-red-600 text-sm font-medium flex items-center gap-1">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                Xóa
+            </button>
+        </div>
+        <form id="editReviewForm" action="/san-pham/{{ $userReview->id }}/cap-nhat-danh-gia" method="POST">
+            @csrf
+            <div class="mb-4">
+                <label class="block text-gray-medium mb-2">Đánh giá của bạn</label>
+                <div class="flex gap-2" id="editStarRating">
+                    @for($i = 1; $i <= 5; $i++)
+                    <button type="button" class="text-3xl {{ $i <= $userReview->danh_gia ? 'text-yellow-400' : 'text-gray-300' }} hover:text-yellow-400 transition-colors" data-rating="{{ $i }}" onclick="setEditRating({{ $i }})">★</button>
+                    @endfor
+                </div>
+                <input type="hidden" name="danh_gia" id="editDanhGiaInput" value="{{ $userReview->danh_gia }}">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-medium mb-2">Nội dung đánh giá</label>
+                <textarea name="noi_dung" rows="4" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-main focus:border-transparent transition-all" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này...">{{ $userReview->noi_dung }}</textarea>
+            </div>
+            <button type="submit" class="px-6 py-3 bg-gradient-to-r from-rose-main to-pink-main text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all font-semibold">Cập nhật đánh giá</button>
+        </form>
     </div>
     @elseif(!auth()->check())
-    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-8">
-        <p class="text-gray-medium">Vui lòng <a href="{{ route('login') }}" class="text-rose-main font-semibold hover:underline">đăng nhập</a> để đánh giá sản phẩm.</p>
+    <div class="bg-gradient-to-r from-rose-pastel to-pink-pastel border border-rose-200 rounded-xl p-4 mb-8">
+        <p class="text-gray-700">Vui lòng <a href="{{ route('login') }}" class="text-rose-main font-semibold hover:underline">đăng nhập</a> để đánh giá sản phẩm.</p>
     </div>
     @elseif(!$daMua)
-    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-8">
+    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-4 mb-8">
         <p class="text-yellow-700 font-medium">Bạn cần mua sản phẩm này để có thể đánh giá!</p>
     </div>
     @endif
@@ -130,33 +154,35 @@
     @if($reviews->count() > 0)
     <div class="space-y-4">
         @foreach($reviews as $review)
-        <div class="bg-white rounded-xl p-6 shadow-sm">
-            <div class="flex items-center gap-4 mb-3">
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-start gap-4 mb-3">
                 @if($review->user->anh_dai_dien)
-                <img src="{{ $review->user->anh_dai_dien }}" class="w-12 h-12 rounded-full object-cover">
+                <img src="{{ $review->user->anh_dai_dien }}" class="w-12 h-12 rounded-full object-cover border-2 border-rose-pastel">
                 @else
-                <div class="w-12 h-12 rounded-full bg-rose-pastel flex items-center justify-center">
-                    <i data-lucide="user" class="w-6 h-6 text-rose-main"></i>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-pastel to-pink-pastel flex items-center justify-center border-2 border-rose-main">
+                    <span class="text-rose-main font-bold text-lg">{{ substr($review->user->ho_va_ten ?? $review->user->email, 0, 1) }}</span>
                 </div>
                 @endif
-                <div>
-                    <p class="font-semibold text-gray-dark">{{ $review->user->ho_va_ten ?? $review->user->email }}</p>
-                    <div class="flex gap-1">
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <p class="font-semibold text-gray-dark">{{ $review->user->ho_va_ten ?? $review->user->email }}</p>
+                        <p class="text-sm text-gray-400">{{ $review->created_at->format('d/m/Y H:i') }}</p>
+                    </div>
+                    <div class="flex gap-1 mt-1">
                         @for($i = 1; $i <= 5; $i++)
-                        <span class="text-sm {{ $i <= $review->danh_gia ? 'text-yellow-400' : 'text-gray-300' }}">★</span>
+                        <span class="text-lg {{ $i <= $review->danh_gia ? 'text-yellow-400' : 'text-gray-300' }}">★</span>
                         @endfor
                     </div>
                 </div>
             </div>
             @if($review->noi_dung)
-            <p class="text-gray-medium">{{ $review->noi_dung }}</p>
+            <p class="text-gray-600 leading-relaxed">{{ $review->noi_dung }}</p>
             @endif
-            <p class="text-sm text-gray-400 mt-2">{{ $review->created_at->format('d/m/Y H:i') }}</p>
         </div>
         @endforeach
     </div>
     @else
-    <div class="bg-gray-50 rounded-xl p-8 text-center">
+    <div class="bg-gray-50 rounded-xl p-8 text-center border border-gray-200">
         <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
         <p class="text-gray-medium">Chưa có đánh giá nào cho sản phẩm này.</p>
     </div>
@@ -180,32 +206,109 @@
         });
     }
 
-    document.getElementById('reviewForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
+    function setEditRating(rating) {
+        document.getElementById('editDanhGiaInput').value = rating;
+        const stars = document.querySelectorAll('#editStarRating button');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.remove('text-gray-300');
+                star.classList.add('text-yellow-400');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-300');
+            }
+        });
+    }
+
+    function deleteReview(reviewId) {
+        if (!confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) return;
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
-        fetch(this.action, {
+        fetch(`/san-pham/${reviewId}/xoa-danh-gia`, {
             method: 'POST',
-            body: formData,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             }
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message);
-                location.reload();
+                sonner.success(data.message);
+                setTimeout(() => location.reload(), 1000);
             } else {
-                alert(data.message);
+                sonner.error(data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Có lỗi xảy ra, vui lòng thử lại!');
+            sonner.error('Có lỗi xảy ra, vui lòng thử lại!');
         });
-    });
+    }
+
+    // Form thêm đánh giá
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    sonner.success(data.message);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    sonner.error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                sonner.error('Có lỗi xảy ra, vui lòng thử lại!');
+            });
+        });
+    }
+
+    // Form chỉnh sửa đánh giá
+    const editReviewForm = document.getElementById('editReviewForm');
+    if (editReviewForm) {
+        editReviewForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    sonner.success(data.message);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    sonner.error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                sonner.error('Có lỗi xảy ra, vui lòng thử lại!');
+            });
+        });
+    }
 
     function changeMainImage(src, element) {
         document.getElementById('mainImage').src = src;

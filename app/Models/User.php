@@ -66,6 +66,11 @@ class User extends Authenticatable
         return $this->hasMany(MaGiamGia::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

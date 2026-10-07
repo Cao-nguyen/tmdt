@@ -90,6 +90,14 @@ class SanPhamController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Lấy đánh giá của user hiện tại (nếu có)
+        $userReview = null;
+        if (auth()->check()) {
+            $userReview = \App\Models\Review::where('user_id', auth()->id())
+                ->where('san_pham_id', $sanPham->id)
+                ->first();
+        }
+
         // Kiểm tra user đã mua sản phẩm chưa
         $daMua = false;
         $daDanhGia = false;
@@ -109,7 +117,7 @@ class SanPhamController extends Controller
             $daDanhGia = $review !== null;
         }
 
-        return view('san_pham.show', compact('sanPham', 'sanPhamLienQuan', 'reviews', 'daMua', 'daDanhGia'));
+        return view('san_pham.show', compact('sanPham', 'sanPhamLienQuan', 'reviews', 'daMua', 'daDanhGia', 'userReview'));
     }
 
     /**
@@ -160,6 +168,58 @@ class SanPhamController extends Controller
         ]);
 
         return response()->json(['success' => true, 'message' => 'Đánh giá thành công!']);
+    }
+
+    /**
+     * Cập nhật đánh giá
+     */
+    public function capNhatDanhGia(Request $request, $id)
+    {
+        if (!auth()->check()) {
+            return response()->json(['success' => false, 'message' => 'Vui lòng đăng nhập'], 401);
+        }
+
+        $request->validate([
+            'danh_gia' => 'required|integer|min:1|max:5',
+            'noi_dung' => 'nullable|string|max:1000',
+        ]);
+
+        $review = \App\Models\Review::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$review) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy đánh giá'], 404);
+        }
+
+        $review->update([
+            'danh_gia' => $request->danh_gia,
+            'noi_dung' => $request->noi_dung,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Cập nhật đánh giá thành công!']);
+    }
+
+    /**
+     * Xóa đánh giá
+     */
+    public function xoaDanhGia($id)
+    {
+        if (!auth()->check()) {
+            return response()->json(['success' => false, 'message' => 'Vui lòng đăng nhập'], 401);
+        }
+
+        $review = \App\Models\Review::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$review) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy đánh giá'], 404);
+        }
+
+        $review->delete();
+
+        return response()->json(['success' => true, 'message' => 'Xóa đánh giá thành công!']);
     }
 
     /**

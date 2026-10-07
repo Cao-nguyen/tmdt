@@ -11,6 +11,8 @@
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Sonner Toast -->
+    <script src="https://cdn.jsdelivr.net/npm/sonner@1.5.0/dist/index.umd.min.js"></script>
     <!-- Font Awesome (cho icon mạng xã hội) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
