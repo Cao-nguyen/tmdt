@@ -57,7 +57,7 @@
 
             <div class="mb-6">
                 <h3 class="font-semibold text-gray-dark mb-2">Mô tả</h3>
-                <div class="text-gray-medium leading-relaxed">{{ $sanPham->mo_ta_chi_tiet ?? $sanPham->mo_ta_ngan ?? 'Không có mô tả' }}</div>
+                <div class="text-gray-medium leading-relaxed">{{ $sanPham->mo_ta_chi_tiet ?? 'Không có mô tả' }}</div>
             </div>
 
             <div class="space-y-2 mb-6">
