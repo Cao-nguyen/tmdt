@@ -18,6 +18,7 @@ Route::get('/', [TrangChuController::class, 'index'])->name('trang-chu');
 // Routes sản phẩm
 Route::get('/san-pham', [SanPhamController::class, 'index'])->name('san-pham.index');
 Route::get('/san-pham/{slug}', [SanPhamController::class, 'show'])->name('san-pham.show');
+Route::post('/san-pham/{id}/danh-gia', [SanPhamController::class, 'danhGia'])->name('san-pham.danh-gia')->middleware('auth');
 
 // Routes giỏ hàng
 Route::get('/gio-hang', [GioHangController::class, 'index'])->name('gio-hang.index');
