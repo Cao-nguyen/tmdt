@@ -419,6 +419,9 @@ function submitForm() {
         formData.set('gia_ban', giaBanInput.dataset.rawValue);
     }
 
+    // Sync content từ editor → textarea trước khi submit
+    updateContent();
+
     submitBtn.disabled = true;
     submitSpinner.classList.remove('hidden');
     submitBtnText.textContent = 'Đang xử lý...';
