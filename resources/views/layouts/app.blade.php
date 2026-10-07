@@ -13,6 +13,13 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Sonner Toast -->
     <script src="https://cdn.jsdelivr.net/npm/sonner@1.5.0/dist/index.umd.min.js"></script>
+    <script>
+        // Make sonner available globally
+        window.sonner = window.Sonner || {
+            success: (msg) => alert(msg),
+            error: (msg) => alert(msg)
+        };
+    </script>
     <!-- Marked.js (Markdown parser) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Font Awesome (cho icon mạng xã hội) -->

@@ -169,7 +169,7 @@
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div class="flex items-start gap-4 mb-3">
                 @php
-                    $avatarUrl = $review->user->anh_dai_dien;
+                    $avatarUrl = $review->user->anh_dai_dien ? asset($review->user->anh_dai_dien) : null;
                     $displayName = $review->user->ho_ten ?? $review->user->email;
                     $initial = strtoupper(substr($displayName, 0, 1));
                 @endphp
