@@ -225,14 +225,89 @@
         }
     });
 
+    // Form thêm đánh giá - dynamic binding
+    function setupReviewForm() {
+        const reviewForm = document.getElementById('reviewForm');
+        if (reviewForm && !reviewForm.hasAttribute('data-bound')) {
+            reviewForm.setAttribute('data-bound', 'true');
+            reviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        sonner.success(data.message);
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        sonner.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    sonner.error('Có lỗi xảy ra, vui lòng thử lại!');
+                });
+            });
+        }
+    }
+
+    // Form chỉnh sửa đánh giá - dynamic binding
+    function setupEditReviewForm() {
+        const editReviewForm = document.getElementById('editReviewForm');
+        if (editReviewForm && !editReviewForm.hasAttribute('data-bound')) {
+            editReviewForm.setAttribute('data-bound', 'true');
+            editReviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        sonner.success(data.message);
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        sonner.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    sonner.error('Có lỗi xảy ra, vui lòng thử lại!');
+                });
+            });
+        }
+    }
+
+    // Gọi setup khi toggle form
     function toggleReviewForm() {
         const container = document.getElementById('reviewFormContainer');
         container.classList.toggle('hidden');
+        if (!container.classList.contains('hidden')) {
+            setupReviewForm();
+        }
     }
 
     function toggleEditReviewForm() {
         const container = document.getElementById('editReviewFormContainer');
         container.classList.toggle('hidden');
+        if (!container.classList.contains('hidden')) {
+            setupEditReviewForm();
+        }
     }
 
     function setRating(rating) {
@@ -288,68 +363,6 @@
         .catch(error => {
             console.error('Error:', error);
             sonner.error('Có lỗi xảy ra, vui lòng thử lại!');
-        });
-    }
-
-    // Form thêm đánh giá
-    const reviewForm = document.getElementById('reviewForm');
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    sonner.success(data.message);
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    sonner.error(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                sonner.error('Có lỗi xảy ra, vui lòng thử lại!');
-            });
-        });
-    }
-
-    // Form chỉnh sửa đánh giá
-    const editReviewForm = document.getElementById('editReviewForm');
-    if (editReviewForm) {
-        editReviewForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    sonner.success(data.message);
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    sonner.error(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                sonner.error('Có lỗi xảy ra, vui lòng thử lại!');
-            });
         });
     }
 
