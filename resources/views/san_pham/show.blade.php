@@ -168,13 +168,17 @@
         @foreach($reviews as $review)
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div class="flex items-start gap-4 mb-3">
-                @if($review->user->anh_dai_dien)
-                <img src="{{ $review->user->anh_dai_dien }}" class="w-12 h-12 rounded-full object-cover border-2 border-rose-pastel">
-                @else
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-pastel to-pink-pastel flex items-center justify-center border-2 border-rose-main">
-                    <span class="text-rose-main font-bold text-lg">{{ substr($review->user->ho_ten ?? $review->user->email, 0, 1) }}</span>
-                </div>
+                @php
+                    $avatarUrl = $review->user->anh_dai_dien;
+                    $displayName = $review->user->ho_ten ?? $review->user->email;
+                    $initial = strtoupper(substr($displayName, 0, 1));
+                @endphp
+                @if($avatarUrl)
+                <img src="{{ $avatarUrl }}" class="w-12 h-12 rounded-full object-cover border-2 border-rose-pastel" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Avatar">
                 @endif
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-pastel to-pink-pastel flex items-center justify-center border-2 border-rose-main @if($avatarUrl) hidden @endif">
+                    <span class="text-rose-main font-bold text-lg">{{ $initial }}</span>
+                </div>
                 <div class="flex-1">
                     <div class="flex items-center justify-between">
                         <p class="font-semibold text-gray-dark">{{ $review->user->ho_ten ?? $review->user->email }}</p>
@@ -232,6 +236,7 @@
             reviewForm.setAttribute('data-bound', 'true');
             reviewForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+                console.log('Submitting review form...');
                 const formData = new FormData(this);
                 
                 fetch(this.action, {
@@ -242,8 +247,12 @@
                         'Accept': 'application/json'
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Response data:', data);
                     if (data.success) {
                         sonner.success(data.message);
                         setTimeout(() => location.reload(), 1000);
