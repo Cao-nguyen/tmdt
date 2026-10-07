@@ -94,7 +94,7 @@
     <!-- Form đánh giá -->
     <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm">
         <h3 class="font-semibold text-gray-dark mb-4">Viết đánh giá của bạn</h3>
-        <form id="reviewForm" action="{{ route('san-pham.danh-gia', $sanPham->id) }}" method="POST">
+        <form id="reviewForm" action="/san-pham/{{ $sanPham->id }}/danh-gia" method="POST">
             @csrf
             <div class="mb-4">
                 <label class="block text-gray-medium mb-2">Đánh giá của bạn</label>
